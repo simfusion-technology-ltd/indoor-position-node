@@ -1,13 +1,21 @@
-# Use node image
-FROM node:20-alpine AS base
-WORKDIR /usr/src/app
+# Use official Node image
+FROM node:20-alpine
 
-COPY package.json package-lock.json* ./
-COPY tsconfig.json ./
+# Create app directory
+WORKDIR /app
 
-RUN npm ci --only=production
+# Copy package files and install deps
+COPY package*.json ./
+RUN npm ci
 
+# Copy source code
 COPY . .
+
+# Build the project
 RUN npm run build
 
-CMD ["node", "dist/server.js"]
+# Expose backend port (adjust if different)
+EXPOSE 4000
+
+# Run backend production server
+CMD ["npm", "start"]
